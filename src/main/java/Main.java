@@ -33,7 +33,7 @@ public class Main extends Application {
     private Tile[][] board = new Tile[3][3];
     private List<Combo> combos = new ArrayList<>(); // List of combos
     private Line line;
-    private Label labelStart;
+    private Label labelStart, labelTurn, labelTips;
     private Pane root = new Pane();
 
     private Parent createContent() {
@@ -57,7 +57,16 @@ public class Main extends Application {
         labelStart.setTranslateY(250);
         root.getChildren().add(labelStart);
 
+        labelTips = new Label("Right click: X \nLeft click:  O");
+        labelTips.setTranslateX(650);
+        labelTips.setTranslateY(350);
+        root.getChildren().add(labelTips);
 
+        labelTurn = new Label("Turn: X");
+        labelTurn.setFont(Font.font(50));
+        labelTurn.setTranslateY(630);
+        labelTurn.setTranslateX(220);
+        root.getChildren().add(labelTurn);
         // all possible combos
         // horizontal
         for (int y = 0; y < 3; y++) {
@@ -127,7 +136,7 @@ public class Main extends Application {
         root.getChildren().add(btnSelectStart);
 
         // button exit app
-        Button btnExit = new Button("EXIT");
+        Button btnExit = new Button("Exit");
         btnExit.setTranslateX(650);
         btnExit.setTranslateY(200);
         btnExit.setOnAction(event -> {
@@ -201,6 +210,7 @@ public class Main extends Application {
 
                     drawX(); // draw X
                     turnX = false; // set next move to O
+                    labelTurn.setText("Turn: O");
                     checkState(); // after draw X check state of game
                 }
                 else if (event.getButton() == MouseButton.SECONDARY) { // secondary = right mouse button
@@ -209,6 +219,7 @@ public class Main extends Application {
 
                     drawO(); // draw O
                     turnX = true;   // set next move to X
+                    labelTurn.setText("Turn: X");
                     checkState(); // after draw O check state of game
                 }
             });
