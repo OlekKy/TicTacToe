@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -28,7 +29,8 @@ import javafx.util.Duration;
 
 public class Main extends Application {
 
-    private boolean playable = true; // game plays
+    private boolean playable = true; // Flaga ustawiająca czy gra jest możliwa
+    private boolean gameVsAI = false; // Flaga sprawdzajaca czy gra toczy się przeciwko komputerowi
     private boolean turnX = true; // set to start always with X !!!!@@@!!!!
     private Tile[][] board = new Tile[3][3];
     private List<Combo> combos = new ArrayList<>(); // List of combos
@@ -67,18 +69,18 @@ public class Main extends Application {
         labelTurn.setTranslateY(630);
         labelTurn.setTranslateX(220);
         root.getChildren().add(labelTurn);
-        // all possible combos
-        // horizontal
+        // Wszystkie możliwe ułozenia wygrywające
+        // 3 ułożenia poziome
         for (int y = 0; y < 3; y++) {
             combos.add(new Combo(board[0][y], board[1][y], board[2][y]));
         }
 
-        // vertical
+        // 3 ułożenia pionowe
         for (int x = 0; x < 3; x++) {
             combos.add(new Combo(board[x][0], board[x][1], board[x][2]));
         }
 
-        // diagonals
+        // 2 przekątne
         combos.add(new Combo(board[0][0], board[1][1], board[2][2]));
         combos.add(new Combo(board[2][0], board[1][1], board[0][2]));
 
@@ -113,6 +115,7 @@ public class Main extends Application {
         btnRestart.setTranslateY(50);
         btnRestart.setOnAction(event -> {
             // clean all tiles
+            gameVsAI = false;
             for (int i = 0; i < 3; i++) {   // Y location
                 for (int j = 0; j < 3; j++) {
                     board[j][i].text.setText(null);
@@ -128,9 +131,17 @@ public class Main extends Application {
         btnSelectStart.setTranslateX(650);
         btnSelectStart.setTranslateY(100);
         btnSelectStart.setOnAction(event -> {
+            // Gra przeciwko komputerowi
+            gameVsAI = true;
 
-//      play with computer game
-
+            for (int i = 0; i < 3; i++) {   // Y location
+                for (int j = 0; j < 3; j++) {
+                    board[j][i].text.setText(null);
+                    root.getChildren().remove(line);
+                    turnX = true;
+                    playable = true;
+                }
+            }
 
         });
         root.getChildren().add(btnSelectStart);
@@ -152,6 +163,15 @@ public class Main extends Application {
                 playable = false;
                 playWinAnimation(combo);
                 break;
+            }
+        }
+    }
+
+    private void computerPlay() {
+
+        for (int i = 0; i < 3; i++) {   //
+            for (int j = 0; j < 3; j++) {   //
+
             }
         }
     }
@@ -204,23 +224,97 @@ public class Main extends Application {
                 if (!playable) // if playable = false then do nothing else ( clicking disabled)
                     return;
 
-                if (event.getButton() == MouseButton.PRIMARY) { // primary = left mouse button
-                    if (!turnX) // if turnX = false then do nothing on left clicks
-                        return;
+                if (gameVsAI) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        if (turnX) {
+                            drawX();
+                            turnX = false;
+                            labelTurn.setText("Turn: O - Computer");
+                            checkState();
+                        }
+                    }
 
-                    drawX(); // draw X
-                    turnX = false; // set next move to O
-                    labelTurn.setText("Turn: O");
-                    checkState(); // after draw X check state of game
+                    if (!turnX) { // jeśli ruch komputera...
+                        for (int i = 0; i < 3; i++) {   // Y location
+                            for (int j = 0; j < 3; j++) {
+                                if (board[j][i].text.getText().equals("X")){
+
+                                    //System.out.println(board[j][i].text.getText());
+                                    System.out.println("W polu " + j + " " + i +" wykryto X");
+
+                                    // sprawdzenie w poziomie
+                                    if ((board[0][i].text.getText().equals("X")) && (board[1][i].text.getText().equals("X"))){
+                                        if (!(board[2][i].text.getText().equals("X")) || !(board[2][i].text.getText().equals("O"))){
+                                            drawOAI(2, i);
+                                        }
+                                    } else if ((board[0][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))){
+                                        if (!(board[1][i].text.getText().equals("X")) || !(board[1][i].text.getText().equals("O"))) {
+                                            drawOAI(1, i);
+                                        }
+                                    } else if ((board[1][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))){
+                                        if (!(board[0][i].text.getText().equals("X")) || !(board[0][i].text.getText().equals("O"))) {
+                                            drawOAI(0, i);
+                                        }
+                                    } // sprawdzenie w pionie
+                                    else if  ((board[j][0].text.getText().equals("X")) && (board[j][1].text.getText().equals("X"))) {
+                                        if (!(board[j][2].text.getText().equals("X")) || !(board[j][2].text.getText().equals("O"))) {
+                                            drawOAI(j, 2);
+                                        }
+                                    } else if  ((board[j][0].text.getText().equals("X")) && (board[j][2].text.getText().equals("X"))) {
+                                        if (!(board[j][1].text.getText().equals("X")) || !(board[j][1].text.getText().equals("O"))) {
+                                            drawOAI(j, 1);
+                                        }
+                                    } else if  ((board[j][1].text.getText().equals("X")) && (board[j][2].text.getText().equals("X"))) {
+                                        if (!(board[j][0].text.getText().equals("X")) || !(board[j][0].text.getText().equals("O"))) {
+                                            drawOAI(j, 0);
+                                        }
+                                    } else {
+                                        for (int w = 0; w < 3; w++) {   // Y location
+                                            for (int v = 0; v < 3; v++) {
+                                                if (!(board[v][w].text.getText().equals("X")) && !(board[v][w].text.getText().equals("O")) ) {
+                                                    drawOAI(v, w);
+                                                    System.out.println("W polxasdu " + j + " " + i +" wykryto X");
+                                                    checkState();
+                                                    turnX = true;
+                                                    labelTurn.setText("Turn: X - Player");
+
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    //}
+                                }
+                            }
+                        }
+                        System.out.println("AI zrobil ruch");
+                        labelTurn.setText("Turn: X - Player");
+                        turnX = true;
+                        checkState();
+                    }
+
+                    //return;
                 }
-                else if (event.getButton() == MouseButton.SECONDARY) { // secondary = right mouse button
-                    if (turnX) // if turnX = true then do nothing on right click
-                        return;
+                if (!gameVsAI) {
 
-                    drawO(); // draw O
-                    turnX = true;   // set next move to X
-                    labelTurn.setText("Turn: X");
-                    checkState(); // after draw O check state of game
+                    if (event.getButton() == MouseButton.PRIMARY) { // primary = left mouse button
+                        if (!turnX) // if turnX = false then do nothing on left clicks
+                            return;
+
+                        drawX(); // draw X
+                        turnX = false; // set next move to O
+                        labelTurn.setText("Turn: O");
+                        checkState(); // after draw X check state of game
+                    } else if (event.getButton() == MouseButton.SECONDARY) { // secondary = right mouse button
+                        if (turnX) // if turnX = true then do nothing on right click
+                            return;
+
+                        drawO(); // draw O
+                        turnX = true;   // set next move to X
+                        labelTurn.setText("Turn: X");
+                        checkState(); // after draw O check state of game
+                    }
                 }
             });
         }
@@ -243,6 +337,9 @@ public class Main extends Application {
 
         private void drawO() {
             text.setText("O");
+        }
+        private void drawOAI(int x, int y) {
+            board[x][y].text.setText("O");
         }
     }
 
