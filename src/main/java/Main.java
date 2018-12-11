@@ -235,11 +235,42 @@ public class Main extends Application {
                     }
 
                     if (!turnX) { // jeśli ruch komputera...
+
+                        if ((board[0][0].text.getText().equals("X")) && (board[1][1].text.getText().equals("X"))){
+                            if (!(board[2][2].text.getText().equals("X")) || !(board[2][2].text.getText().equals("O"))){
+                                drawOAI(2, 2);
+                            }
+                        }
+                        if ((board[0][0].text.getText().equals("X")) && (board[2][2].text.getText().equals("X"))){
+                            if (!(board[1][1].text.getText().equals("X")) || !(board[1][1].text.getText().equals("O"))){
+                                drawOAI(1, 1);
+                            }
+                        }
+                        if ((board[1][1].text.getText().equals("X")) && (board[2][2].text.getText().equals("X"))){
+                            if (!(board[0][0].text.getText().equals("X")) || !(board[0][0].text.getText().equals("O"))){
+                                drawOAI(0, 0);
+                            }
+                        }
+                        if ((board[2][0].text.getText().equals("X")) && (board[1][1].text.getText().equals("X"))){
+                            if (!(board[0][2].text.getText().equals("X")) || !(board[0][2].text.getText().equals("O"))){
+                                drawOAI(0, 2);
+                            }
+                        }
+                        if ((board[2][0].text.getText().equals("X")) && (board[0][2].text.getText().equals("X"))){
+                            if (!(board[1][1].text.getText().equals("X")) || !(board[1][1].text.getText().equals("O"))){
+                                drawOAI(1, 1);
+                            }
+                        }
+                        if ((board[1][1].text.getText().equals("X")) && (board[0][2].text.getText().equals("X"))){
+                            if (!(board[2][0].text.getText().equals("X")) || !(board[2][0].text.getText().equals("O"))){
+                                drawOAI(2, 0);
+                            }
+                        }
+
                         for (int i = 0; i < 3; i++) {   // Y location
                             for (int j = 0; j < 3; j++) {
                                 if (board[j][i].text.getText().equals("X")){
 
-                                    //System.out.println(board[j][i].text.getText());
                                     System.out.println("W polu " + j + " " + i +" wykryto X");
 
                                     // sprawdzenie w poziomie
@@ -268,8 +299,11 @@ public class Main extends Application {
                                         if (!(board[j][0].text.getText().equals("X")) || !(board[j][0].text.getText().equals("O"))) {
                                             drawOAI(j, 0);
                                         }
-                                    } else {
-                                        for (int w = 0; w < 3; w++) {   // Y location
+                                    }
+
+                                    else {
+                                        drawOAI(0,0);
+                                       /* for (int w = 0; w < 3; w++) {   // Y location
                                             for (int v = 0; v < 3; v++) {
                                                 if (!(board[v][w].text.getText().equals("X")) && !(board[v][w].text.getText().equals("O")) ) {
                                                     drawOAI(v, w);
@@ -281,7 +315,7 @@ public class Main extends Application {
                                                     return;
                                                 }
                                             }
-                                        }
+                                        }*/
                                     }
 
                                     //}
