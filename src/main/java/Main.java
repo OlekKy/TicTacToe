@@ -32,6 +32,7 @@ public class Main extends Application {
 
     private boolean playable = true; // Flaga ustawiająca czy gra jest możliwa
     private boolean gameVsAI = false; // Flaga sprawdzajaca czy gra toczy się przeciwko komputerowi
+    private boolean isFirstAIMove = true;
     private boolean turnX = true; // set to start always with X !!!!@@@!!!!
     private Tile[][] board = new Tile[3][3];
     private List<Combo> combos = new ArrayList<>(); // List of combos
@@ -236,6 +237,10 @@ public class Main extends Application {
                     }
 
                     if (!turnX) { // jeśli ruch komputera...
+                        if (isFirstAIMove){
+                            drawOAI(0,0);
+                            return;
+                        }
 
                         // Jesli komputer znajduje 2 swoje znaki, wtedy wpisuje trzeci i wygrywa.
                         for (int i = 0; i < 3; i++) {
@@ -347,41 +352,54 @@ public class Main extends Application {
                             drawOAI(2, 0);
                             return;
                         }
-
-                        boolean done = false;
-                        Random r = new Random();
-                        int a,b;
-                        while (!done) {
-                            a = r.nextInt(3);
-                            b = r.nextInt(3);
-                            drawOAI(a,b);
-                            done = true;
-                        }
-                        System.out.println("AI zrobil ruch");
-                        labelTurn.setText("Turn: X - Player");
-                        turnX = true; // 
+                        randomField();
+//                        boolean done = false;
+//                        Random r = new Random();
+//                        int a,b;
+//                        while (!done) {
+//                            a = r.nextInt(3);
+//                            b = r.nextInt(3);
+//                            drawOAI(a,b);
+//                            done = true;
+//                        }
+                        //System.out.println("AI zrobil ruch");
+                        //labelTurn.setText("Turn: X - Player");
+                        //turnX = true; //
                         //checkState();
                     }
-
+                    labelTurn.setText("Turn: X - Player");
+                    turnX = true;
                 }
+
                 if (!gameVsAI) {
 
                     if (event.getButton() == MouseButton.PRIMARY) { // primary = left mouse button
                         if (!turnX) // if turnX = false then do nothing on left clicks
                             return;
 
-                        drawX(); // draw X
-                        turnX = false; // set next move to O
-                        labelTurn.setText("Turn: O");
-                        checkState(); // after draw X check state of game
+                        if (drawX()) { // draw X
+                            turnX = false;
+                            labelTurn.setText("Turn: O");
+                            checkState();
+                        } else {
+                            turnX = true;// set next move to O
+                        }
+                        //turnX = !drawX();
+                         // after draw X check state of game
                     } else if (event.getButton() == MouseButton.SECONDARY) { // secondary = right mouse button
                         if (turnX) // if turnX = true then do nothing on right click
                             return;
 
-                        drawO(); // draw O
-                        turnX = true;   // set next move to X
-                        labelTurn.setText("Turn: X");
-                        checkState(); // after draw O check state of game
+                        if (drawO()){
+                            turnX = true;
+                            labelTurn.setText("Turn: X");
+                            checkState();
+                        } else {
+                            turnX = false;
+                        }
+                        //turnX = !drawO();   // set next move to X
+                        //labelTurn.setText("Turn: X");
+                        //checkState(); // after draw O check state of game
                     }
                 }
             });
@@ -399,17 +417,43 @@ public class Main extends Application {
             return text.getText();
         }
 
-        private void drawX() {
-            text.setText("X");
+        private boolean drawX() {
+            if ((!text.getText().equals("X")) && !(text.getText().equals("O"))){
+                text.setText("X");
+                return true;
+            } else {
+                return false;
+            }
         }
 
-        private void drawO() {
-            text.setText("O");
+        private void randomField(){
+            boolean done = false;
+            Random r = new Random();
+            int a,b;
+            while (!done) {
+                a = r.nextInt(3);
+                b = r.nextInt(3);
+                drawOAI(a,b);
+                done = true;
+            }
+        }
+
+        private boolean drawO() {
+            if ((!text.getText().equals("X")) && !(text.getText().equals("O"))) {
+                text.setText("O");
+                return true;
+            } else {
+                return false;
+            }
         }
         private void drawOAI(int x, int y) {
-            if (!(board[x][y].text.getText().equals("X")) || !(board[x][y].text.getText().equals("O"))){
+            if (!(board[x][y].text.getText().equals("X")) && !(board[x][y].text.getText().equals("O"))){
                 board[x][y].text.setText("O");
+                turnX=true;
                 checkState();
+            } else {
+                randomField(); // do wyjebania
+
             }
         }
     }
