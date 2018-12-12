@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javafx.animation.KeyFrame;
@@ -236,99 +237,132 @@ public class Main extends Application {
 
                     if (!turnX) { // jeśli ruch komputera...
 
-                        if ((board[0][0].text.getText().equals("X")) && (board[1][1].text.getText().equals("X"))){
-                            if (!(board[2][2].text.getText().equals("X")) || !(board[2][2].text.getText().equals("O"))){
-                                drawOAI(2, 2);
+                        // Jesli komputer znajduje 2 swoje znaki, wtedy wpisuje trzeci i wygrywa.
+                        for (int i = 0; i < 3; i++) {
+                            if ((board[i][0].text.getText().equals("O")) && (board[i][1].text.getText().equals("O"))){
+                                drawOAI(i, 2);
+                                return;
                             }
+                            if ((board[i][0].text.getText().equals("O")) && (board[i][2].text.getText().equals("O"))){
+                                drawOAI(i, 1);
+                                return;
+                            }
+                            if ((board[i][1].text.getText().equals("O")) && (board[i][2].text.getText().equals("O"))){
+                                drawOAI(i, 0);
+                                return;
+                            }
+                            // Sprawdzenie w pionie
+                            if ((board[0][i].text.getText().equals("O")) && (board[1][i].text.getText().equals("O"))){
+                                drawOAI(2, i);
+                                return;
+                            }
+                            if ((board[0][i].text.getText().equals("O")) && (board[2][i].text.getText().equals("O"))){
+                                drawOAI(1, i);
+                                return;
+                            }
+                            if ((board[1][i].text.getText().equals("O")) && (board[2][i].text.getText().equals("O"))){
+                                drawOAI(0, i);
+                                return;
+                            }
+                        }
+                        // Sprawdzanie przekatnych
+                        // Przekatna z lewej do prawej
+                        if ((board[0][0].text.getText().equals("O")) && (board[1][1].text.getText().equals("O"))){
+                            drawOAI(2, 2);
+                            return;
+                        }
+                        if ((board[0][0].text.getText().equals("O")) && (board[2][2].text.getText().equals("O"))){
+                            drawOAI(1, 1);
+                            return;
+                        }
+                        if ((board[1][1].text.getText().equals("O")) && (board[2][2].text.getText().equals("O"))){
+                            drawOAI(0, 0);
+                            return;
+                        }
+                        // Przekatna z prawej do lewej
+                        if ((board[2][0].text.getText().equals("O")) && (board[1][1].text.getText().equals("O"))){
+                            drawOAI(0, 2);
+                            return;
+                        }
+                        if ((board[2][0].text.getText().equals("O")) && (board[0][2].text.getText().equals("O"))){
+                            drawOAI(1, 1);
+                            return;
+                        }
+                        if ((board[1][1].text.getText().equals("O")) && (board[0][2].text.getText().equals("O"))){
+                            drawOAI(2, 0);
+                            return;
+                        }
+
+                        // Sprawdzanie ruchu gracza w pionie i w poziomie - Blokowanie
+                        for (int i = 0; i < 3; i++) {
+                            // sprawdzenie w poziomie
+                            if ((board[i][0].text.getText().equals("X")) && (board[i][1].text.getText().equals("X"))) {
+                                drawOAI(i, 2);
+                                return;
+                            }
+                            if ((board[i][0].text.getText().equals("X")) && (board[i][2].text.getText().equals("X"))) {
+                                drawOAI(i, 1);
+                                return;
+                            }
+                            if ((board[i][1].text.getText().equals("X")) && (board[i][2].text.getText().equals("X"))) {
+                                drawOAI(i,0);
+                                return;
+                            }
+                            // sprawdzenie w pionie
+                            if ((board[0][i].text.getText().equals("X")) && (board[1][i].text.getText().equals("X"))) {
+                                drawOAI(2, i);
+                                return;
+                            }
+                            if ((board[0][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))) {
+                                drawOAI(1, i);
+                            }
+                            if ((board[1][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))) {
+                                drawOAI(0,i);
+                            }
+                        }
+
+                        // Blokowanie po przekatnej z lewej do prawej
+                        if ((board[0][0].text.getText().equals("X")) && (board[1][1].text.getText().equals("X"))){
+                            drawOAI(2, 2);
+                            return;
                         }
                         if ((board[0][0].text.getText().equals("X")) && (board[2][2].text.getText().equals("X"))){
-                            if (!(board[1][1].text.getText().equals("X")) || !(board[1][1].text.getText().equals("O"))){
-                                drawOAI(1, 1);
-                            }
+                            drawOAI(1, 1);
+                            return;
                         }
                         if ((board[1][1].text.getText().equals("X")) && (board[2][2].text.getText().equals("X"))){
-                            if (!(board[0][0].text.getText().equals("X")) || !(board[0][0].text.getText().equals("O"))){
-                                drawOAI(0, 0);
-                            }
+                            drawOAI(0, 0);
+                            return;
                         }
+                        // Blokowanie po przekatnej z prawej do lewej
                         if ((board[2][0].text.getText().equals("X")) && (board[1][1].text.getText().equals("X"))){
-                            if (!(board[0][2].text.getText().equals("X")) || !(board[0][2].text.getText().equals("O"))){
-                                drawOAI(0, 2);
-                            }
+                            drawOAI(0, 2);
+                            return;
                         }
                         if ((board[2][0].text.getText().equals("X")) && (board[0][2].text.getText().equals("X"))){
-                            if (!(board[1][1].text.getText().equals("X")) || !(board[1][1].text.getText().equals("O"))){
-                                drawOAI(1, 1);
-                            }
+                            drawOAI(1, 1);
+                            return;
                         }
                         if ((board[1][1].text.getText().equals("X")) && (board[0][2].text.getText().equals("X"))){
-                            if (!(board[2][0].text.getText().equals("X")) || !(board[2][0].text.getText().equals("O"))){
-                                drawOAI(2, 0);
-                            }
+                            drawOAI(2, 0);
+                            return;
                         }
 
-                        for (int i = 0; i < 3; i++) {   // Y location
-                            for (int j = 0; j < 3; j++) {
-                                if (board[j][i].text.getText().equals("X")){
-
-                                    System.out.println("W polu " + j + " " + i +" wykryto X");
-
-                                    // sprawdzenie w poziomie
-                                    if ((board[0][i].text.getText().equals("X")) && (board[1][i].text.getText().equals("X"))){
-                                        if (!(board[2][i].text.getText().equals("X")) || !(board[2][i].text.getText().equals("O"))){
-                                            drawOAI(2, i);
-                                        }
-                                    } else if ((board[0][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))){
-                                        if (!(board[1][i].text.getText().equals("X")) || !(board[1][i].text.getText().equals("O"))) {
-                                            drawOAI(1, i);
-                                        }
-                                    } else if ((board[1][i].text.getText().equals("X")) && (board[2][i].text.getText().equals("X"))){
-                                        if (!(board[0][i].text.getText().equals("X")) || !(board[0][i].text.getText().equals("O"))) {
-                                            drawOAI(0, i);
-                                        }
-                                    } // sprawdzenie w pionie
-                                    else if  ((board[j][0].text.getText().equals("X")) && (board[j][1].text.getText().equals("X"))) {
-                                        if (!(board[j][2].text.getText().equals("X")) || !(board[j][2].text.getText().equals("O"))) {
-                                            drawOAI(j, 2);
-                                        }
-                                    } else if  ((board[j][0].text.getText().equals("X")) && (board[j][2].text.getText().equals("X"))) {
-                                        if (!(board[j][1].text.getText().equals("X")) || !(board[j][1].text.getText().equals("O"))) {
-                                            drawOAI(j, 1);
-                                        }
-                                    } else if  ((board[j][1].text.getText().equals("X")) && (board[j][2].text.getText().equals("X"))) {
-                                        if (!(board[j][0].text.getText().equals("X")) || !(board[j][0].text.getText().equals("O"))) {
-                                            drawOAI(j, 0);
-                                        }
-                                    }
-
-                                    else {
-                                        drawOAI(0,0);
-                                       /* for (int w = 0; w < 3; w++) {   // Y location
-                                            for (int v = 0; v < 3; v++) {
-                                                if (!(board[v][w].text.getText().equals("X")) && !(board[v][w].text.getText().equals("O")) ) {
-                                                    drawOAI(v, w);
-                                                    System.out.println("W polxasdu " + j + " " + i +" wykryto X");
-                                                    checkState();
-                                                    turnX = true;
-                                                    labelTurn.setText("Turn: X - Player");
-
-                                                    return;
-                                                }
-                                            }
-                                        }*/
-                                    }
-
-                                    //}
-                                }
-                            }
+                        boolean done = false;
+                        Random r = new Random();
+                        int a,b;
+                        while (!done) {
+                            a = r.nextInt(3);
+                            b = r.nextInt(3);
+                            drawOAI(a,b);
+                            done = true;
                         }
                         System.out.println("AI zrobil ruch");
                         labelTurn.setText("Turn: X - Player");
-                        turnX = true;
-                        checkState();
+                        turnX = true; // 
+                        //checkState();
                     }
 
-                    //return;
                 }
                 if (!gameVsAI) {
 
@@ -373,7 +407,10 @@ public class Main extends Application {
             text.setText("O");
         }
         private void drawOAI(int x, int y) {
-            board[x][y].text.setText("O");
+            if (!(board[x][y].text.getText().equals("X")) || !(board[x][y].text.getText().equals("O"))){
+                board[x][y].text.setText("O");
+                checkState();
+            }
         }
     }
 
