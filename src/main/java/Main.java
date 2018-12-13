@@ -359,7 +359,7 @@ public class Main extends Application {
                         }
                         System.out.println("AI zrobil ruch");
                         labelTurn.setText("Turn: X - Player");
-                        turnX = true; // 
+                        turnX = true; 
                         //checkState();
                     }
 
