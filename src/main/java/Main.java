@@ -314,24 +314,45 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Prywatna Klasa Tile, która rozszerza klasę StackPane, dzięki czemu możliwa jest konfiguracja
+     * pól składających się na planszę gry,
+     */
+    private class Tile extends StackPane {
 
-    private class Tile extends StackPane {  // tile class
-        private Text text = new Text(); // when app starts it creates tile with empty text
+        /**
+         * Pole tekstowe, które jest tworzone podczas startu aplikacji. Domyślnie jest puste.
+         */
+        private Text text = new Text();
 
+        /**
+         * Konstruktor klasy Tile. Odpowiada za stworzenie pojedynczego elementu (Kwadratu) planszy.
+         * Tworzy kwadrat o wymiarach 200x200, o przeźroczystym wypełnieniu i czarnym kolorze krawędzi.
+         * Zawiera implementację operacji wykonywach po kliknięciu na dany kwadrat.
+         */
         public Tile() {
-            Rectangle border = new Rectangle(200, 200); // size of rectangulars
-            border.setFill(null); // inside color - transparent
-            border.setStroke(Color.BLACK);  // border color BLACK
+            Rectangle border = new Rectangle(200, 200);
+            border.setFill(null);
+            border.setStroke(Color.BLACK);
 
-            text.setFont(Font.font(72)); // size of text font
+            text.setFont(Font.font(72));
 
             setAlignment(Pos.CENTER);
-            getChildren().addAll(border, text); // adding border and text to list of children
+            getChildren().addAll(border, text);
 
-            setOnMouseClicked(event -> { // able to call this method because of extending StackPane and inherited all methods
-                if (!playable) // if playable = false then do nothing else ( clicking disabled)
+            /**
+             * Po kliknięciu na dany kwadrat wykonuje operacje zaleznie od spełnionych warunków. Jeśli gra jest w trybie
+             * "playable" to wykonaj akcje zależnie czy gra toczy się przeciwko AI lub przeciwko Graczowi 2.
+             */
+            setOnMouseClicked(event -> {
+                if (!playable)
                     return;
 
+                /**
+                 * Gdy gra toczy się przeciwko komputerowi to gracz wykonuje swój ruch za pomocą lewego klawisza myszy.
+                 * Następuje zmiana statusu tury oraz sprawdzany jest stan gry. Ruch wykonywane przez komputer jest
+                 * zgodny z zaimplementowanym algorytmem w metodzie AIMove().
+                 */
                 if (gameVsAI) {
                     if (event.getButton() == MouseButton.PRIMARY) {
                         if (turnX) {
@@ -345,9 +366,7 @@ public class Main extends Application {
                     }
 
                     if (playable) {
-
-                        if (!turnX) { // jeśli ruch komputera...
-
+                        if (!turnX) {
                             if (AIMove()) {
                                 checkState();
                                 labelTurn.setText("Turn: X - Player");
@@ -360,22 +379,26 @@ public class Main extends Application {
                     }
                 }
 
+                /**
+                 * Jeśli gra toczy się przeciwko graczowi 2, to po każdym wykonaniu ruchu tura przechodzi do przeciwnego gracza.
+                 * Pierwszy gracz rysuje "X" za pomocą lewego klawisza myszy, a drugi za pomocą prawego. Odpowiednio z turami
+                 * zmieniane są również wartości pola tekstowego labelTurn.
+                 */
                 if (!gameVsAI) {
-
-                    if (event.getButton() == MouseButton.PRIMARY) { // primary = left mouse button
-                        if (!turnX) // if turnX = false then do nothing on left clicks
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        if (!turnX)
                             return;
 
-                        if (drawX()) { // draw X
+                        if (drawX()) {
                             turnX = false;
                             labelTurn.setText("Turn: O");
                             checkState();
                         } else {
-                            turnX = true;// set next move to O
+                            turnX = true;
                         }
 
-                    } else if (event.getButton() == MouseButton.SECONDARY) { // secondary = right mouse button
-                        if (turnX) // if turnX = true then do nothing on right click
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        if (turnX)
                             return;
 
                         if (drawO()){
